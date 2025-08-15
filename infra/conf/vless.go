@@ -56,13 +56,13 @@ func (c *VLessInboundConfig) Build() (proto.Message, error) {
 		account.Id = u.String()
 
 		switch account.Flow {
-		case "":
-		case vless.XRV:
-			if c.Decryption != "none" {
-				return nil, errors.New(`VLESS clients: "decryption" doesn't support "flow" yet`)
-			}
+		case "", vless.XRV:
 		default:
 			return nil, errors.New(`VLESS clients: "flow" doesn't support "` + account.Flow + `" in this version`)
+		}
+
+		if c.Decryption != "none" && account.Flow == vless.XRV {
+			return nil, errors.New(`VLESS clients: "decryption" doesn't support "flow" yet`)
 		}
 
 		if account.Encryption != "" {
